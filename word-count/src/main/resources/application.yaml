@@ -1,0 +1,30 @@
+server:
+  port: 8096
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      allow.auto.create.topics: false
+      session.timeout.ms: 45000
+      health-indicator.timeout-ms: 5000
+      spring.json.use.type.headers: false
+      sasl:
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username='admin' password='admin-secret';
+        mechanism: PLAIN
+      security:
+        protocol: SASL_PLAINTEXT
+    streams:
+      application-id: word-count
+      replication-factor: 1
+      properties:
+        auto-offset-reset: earliest
+        compression.type: zstd
+        state.dir: ${spring.application.name}${server.port}
+        default:
+          key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+          value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    topics:
+      in: word-count-input
+      out: word-count-output

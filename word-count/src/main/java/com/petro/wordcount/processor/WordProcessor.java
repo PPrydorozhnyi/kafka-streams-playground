@@ -22,9 +22,7 @@ public class WordProcessor {
       ) {
 
     // 1 - stream from Kafka
-    final KStream<String, String> textLines = builder.stream(inTopic);
-
-    final KTable<String, Long> wordCounts = textLines
+    final KTable<String, Long> wordCounts = builder.<String, String>stream(inTopic)
         // 2 - map values to lowercase
         .mapValues(textLine -> textLine.toLowerCase())
         // 3 - flatmap values split by space

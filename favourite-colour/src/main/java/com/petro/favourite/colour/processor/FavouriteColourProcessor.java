@@ -35,7 +35,7 @@ public class FavouriteColourProcessor {
           return KeyValue.pair(splitBody[0], splitBody[1]);
         })
         // 5 - map to table to persist
-        .toTable(Named.as("user-preference"))
+        .toTable(Materialized.as("user-preference"))
         // 6 - group by key to run aggregation function
         .groupBy((key, value) -> KeyValue.pair(value, value))
         // 7 - actual counting operation

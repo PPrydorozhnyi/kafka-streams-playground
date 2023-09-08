@@ -1,0 +1,41 @@
+server:
+  port: 8098
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      allow.auto.create.topics: false
+      session.timeout.ms: 45000
+      health-indicator.timeout-ms: 5000
+      spring.json.use.type.headers: false
+      sasl:
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username='admin' password='admin-secret';
+        mechanism: PLAIN
+      security:
+        protocol: SASL_PLAINTEXT
+    streams:
+      application-id: balance-tracker
+      replication-factor: 1
+      properties:
+        auto-offset-reset: earliest
+        compression.type: zstd
+        processing.guarantee: exactly_once_v2
+        default:
+          key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+          value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    topics:
+      in: balance-input
+      out: balance-output
+      colour-topic: favourite-colour-user-preference-changelog
+      balance-colour-topic: balance-colour-changes
+    consumer:
+      properties:
+        isolation.level: read_committed
+    producer:
+      acks: -1 # optional, all - Note that enabling idempotence requires this config value to be 'all'.
+      compression-type: zstd
+      properties:
+        enable.idempotence: true # optional when we have processing.guarantee: exactly_once_v2
+

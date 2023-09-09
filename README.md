@@ -1,6 +1,4 @@
-# Kafka Streams Playground
-
-![Playground build](https://github.com/PPrydorozhnyi/kafka-streams-playground/actions/workflows/gradle.yml/badge.svg)
+# Kafka Streams Playground ![Playground build](https://github.com/PPrydorozhnyi/kafka-streams-playground/actions/workflows/gradle.yml/badge.svg)
 
 Number of small projects to play around Apache Kafka Streams with Spring Boot
 

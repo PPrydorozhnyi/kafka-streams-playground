@@ -33,7 +33,7 @@ git clone git@github.com:PPrydorozhnyi/kafka-streams-playground.git
 
 ## Tests
 
-Topology and integration tests inside <b>balance-app</b> module
+Topology and integration tests inside <i>balance-app</i> module
 
 ## Dependencies
 - Kafka

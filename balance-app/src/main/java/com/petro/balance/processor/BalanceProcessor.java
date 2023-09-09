@@ -1,8 +1,8 @@
 package com.petro.balance.processor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.petro.balance.model.BalanceStateEvent;
 import com.petro.balance.model.BalanceChangeEvent;
+import com.petro.balance.model.BalanceStateEvent;
 import java.time.Instant;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class BalanceProcessor {
 
   @Autowired
-  public void process(
+  public void buildPipeline(
       StreamsBuilder builder,
       @Value("${spring.kafka.topics.in}") String inTopic,
       @Value("${spring.kafka.topics.out}") String outTopic,

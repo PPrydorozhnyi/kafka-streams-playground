@@ -57,8 +57,9 @@ class BalanceProcessorTopologyTest {
       final var firstEvent = new BalanceChangeEvent(name, 10, Instant.ofEpochMilli(System.currentTimeMillis()));
       final var secondEvent = new BalanceChangeEvent(name, 20, Instant.EPOCH);
       final var thirdEvent = new BalanceChangeEvent(name, 40, Instant.ofEpochMilli(System.currentTimeMillis()).plusSeconds(30));
+      final var fourthEvent = new BalanceChangeEvent(name, -5, Instant.EPOCH);
 
-      inputTopic.pipeValueList(List.of(firstEvent, secondEvent, thirdEvent));
+      inputTopic.pipeValueList(List.of(firstEvent, secondEvent, thirdEvent, fourthEvent));
 
       Assertions.assertIterableEquals(
           List.of(

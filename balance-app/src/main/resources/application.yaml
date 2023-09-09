@@ -9,12 +9,6 @@ spring:
       session.timeout.ms: 45000
       health-indicator.timeout-ms: 5000
       spring.json.use.type.headers: false
-      sasl:
-        jaas:
-          config: org.apache.kafka.common.security.plain.PlainLoginModule required username='admin' password='admin-secret';
-        mechanism: PLAIN
-      security:
-        protocol: SASL_PLAINTEXT
     streams:
       application-id: balance-tracker
       replication-factor: 1

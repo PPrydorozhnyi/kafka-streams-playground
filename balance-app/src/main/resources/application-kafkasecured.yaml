@@ -1,0 +1,9 @@
+spring:
+  kafka:
+    properties:
+      sasl:
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username='admin' password='admin-secret';
+        mechanism: PLAIN
+      security:
+        protocol: SASL_PLAINTEXT

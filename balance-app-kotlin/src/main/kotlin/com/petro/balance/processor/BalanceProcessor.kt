@@ -26,7 +26,7 @@ class BalanceProcessor {
         builder: StreamsBuilder,
         @Value("\${spring.kafka.topics.in}") inTopic: String?,
         @Value("\${spring.kafka.topics.out}") outTopic: String?,
-        objectMapper: ObjectMapper?,
+        objectMapper: ObjectMapper,
     ) {
         val balanceChangeSerde: Serde<BalanceChangeEvent> = JsonSerde(BalanceChangeEvent::class.java, objectMapper)
         val balanceStateSerde: Serde<BalanceStateEvent> = JsonSerde(BalanceStateEvent::class.java, objectMapper)

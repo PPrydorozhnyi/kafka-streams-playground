@@ -26,52 +26,57 @@ import org.springframework.test.util.ReflectionTestUtils;
 @EnableAutoConfiguration
 @Import(EmbeddedConfiguration.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@EmbeddedKafka(topics = {BalanceColourJoinerProcessorTest.PREFERRED_COLOURS_TOPIC}, partitions = 3, count = 3)
+@EmbeddedKafka(
+        topics = {BalanceColourJoinerProcessorTest.PREFERRED_COLOURS_TOPIC},
+        partitions = 3,
+        count = 3)
 class BalanceColourJoinerProcessorTest {
 
-  public static final String PREFERRED_COLOURS_TOPIC = "preferred-colours";
+    public static final String PREFERRED_COLOURS_TOPIC = "preferred-colours";
 
-  @Autowired
-  private KafkaTemplate<String, String> kafkaTemplate;
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
-  @Autowired
-  private EmbeddedKafkaBroker embeddedKafkaBroker;
+    @Autowired
+    private EmbeddedKafkaBroker embeddedKafkaBroker;
 
-  @Autowired
-  private KafkaListenerEndpointRegistry registry;
+    @Autowired
+    private KafkaListenerEndpointRegistry registry;
 
-  @Autowired
-  private EmbeddedConfiguration.KafkaColourBalanceListener colourBalanceReceiver;
+    @Autowired
+    private EmbeddedConfiguration.KafkaColourBalanceListener colourBalanceReceiver;
 
-  @BeforeEach
-  public void setUp() {
-    // Wait until the partitions are assigned.
-    registry.getListenerContainers().forEach(container ->
-        ContainerTestUtils.waitForAssignment(container, embeddedKafkaBroker.getPartitionsPerTopic()));
+    @BeforeEach
+    public void setUp() {
+        // Wait until the partitions are assigned.
+        registry.getListenerContainers()
+                .forEach(container ->
+                        ContainerTestUtils.waitForAssignment(container, embeddedKafkaBroker.getPartitionsPerTopic()));
 
-    colourBalanceReceiver.clearData();
-  }
+        colourBalanceReceiver.clearData();
+    }
 
-  @Test
-  void testKafkaStreams() {
-    final var name = (String) ReflectionTestUtils.getField(BalanceChangeProducer.class, "NAME");
-    final var secondName = (String) ReflectionTestUtils.getField(BalanceChangeProducer.class, "SECOND_NAME");
-    final var colour = "black";
+    @Test
+    void testKafkaStreams() {
+        final var name = (String) ReflectionTestUtils.getField(BalanceChangeProducer.class, "NAME");
+        final var secondName = (String) ReflectionTestUtils.getField(BalanceChangeProducer.class, "SECOND_NAME");
+        final var colour = "black";
 
-    kafkaTemplate.send(PREFERRED_COLOURS_TOPIC, name, colour);
+        kafkaTemplate.send(PREFERRED_COLOURS_TOPIC, name, colour);
 
-    Awaitility.await().atMost(20, TimeUnit.SECONDS).pollDelay(100, TimeUnit.MILLISECONDS)
-        .untilAsserted(() -> {
-          final ColourBalanceEvent petroEvent = colourBalanceReceiver.getByName(name);
-          Assertions.assertNotNull(petroEvent);
-          Assertions.assertNotEquals(0, petroEvent.balance());
-          Assertions.assertEquals(colour, petroEvent.colour());
+        Awaitility.await()
+                .atMost(20, TimeUnit.SECONDS)
+                .pollDelay(100, TimeUnit.MILLISECONDS)
+                .untilAsserted(() -> {
+                    final ColourBalanceEvent petroEvent = colourBalanceReceiver.getByName(name);
+                    Assertions.assertNotNull(petroEvent);
+                    Assertions.assertNotEquals(0, petroEvent.balance());
+                    Assertions.assertEquals(colour, petroEvent.colour());
 
-          final ColourBalanceEvent secondEvent = colourBalanceReceiver.getByName(secondName);
-          Assertions.assertNotNull(secondEvent);
-          Assertions.assertNotEquals(0, secondEvent.balance());
-          Assertions.assertNull(secondEvent.colour());
-        });
-  }
-
+                    final ColourBalanceEvent secondEvent = colourBalanceReceiver.getByName(secondName);
+                    Assertions.assertNotNull(secondEvent);
+                    Assertions.assertNotEquals(0, secondEvent.balance());
+                    Assertions.assertNull(secondEvent.colour());
+                });
+    }
 }

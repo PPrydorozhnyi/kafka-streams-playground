@@ -19,29 +19,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class BalanceColourJoinerProcessor {
 
-  @Autowired
-  public void process(
-      StreamsBuilder builder,
-      @Value("${spring.kafka.topics.out}") String balanceStateTopic,
-      @Value("${spring.kafka.topics.colour-topic}") String colourTopic,
-      @Value("${spring.kafka.topics.balance-colour-topic}") String outTopic,
-      ObjectMapper objectMapper
-  ) {
+    @Autowired
+    public void process(
+            StreamsBuilder builder,
+            @Value("${spring.kafka.topics.out}") String balanceStateTopic,
+            @Value("${spring.kafka.topics.colour-topic}") String colourTopic,
+            @Value("${spring.kafka.topics.balance-colour-topic}") String outTopic,
+            ObjectMapper objectMapper) {
 
-    Serde<BalanceStateEvent> balanceStateSerde = new JsonSerde<>(BalanceStateEvent.class, objectMapper);
-    Serde<ColourBalanceEvent> colourBalanceSerde = new JsonSerde<>(ColourBalanceEvent.class, objectMapper);
+        Serde<BalanceStateEvent> balanceStateSerde = new JsonSerde<>(BalanceStateEvent.class, objectMapper);
+        Serde<ColourBalanceEvent> colourBalanceSerde = new JsonSerde<>(ColourBalanceEvent.class, objectMapper);
 
-    final KTable<String, String> colourPreferenceTable = builder.table(colourTopic);
+        final KTable<String, String> colourPreferenceTable = builder.table(colourTopic);
 
-    final KStream<String, BalanceStateEvent> balanceUpdatesStream = builder.stream(balanceStateTopic, Consumed.with(Serdes.String(),
-        balanceStateSerde));
+        final KStream<String, BalanceStateEvent> balanceUpdatesStream =
+                builder.stream(balanceStateTopic, Consumed.with(Serdes.String(), balanceStateSerde));
 
-    balanceUpdatesStream.leftJoin(colourPreferenceTable,
-        (balance, colour) -> new ColourBalanceEvent(colour, balance == null ? 0 : balance.balance()),
-        Joined.<String, BalanceStateEvent, String>as("colour-balance-join")
-            .withValueSerde(balanceStateSerde))
-        .to(outTopic, Produced.<String, ColourBalanceEvent>as("join-producer").withValueSerde(colourBalanceSerde));
-
-  }
-
+        balanceUpdatesStream
+                .leftJoin(
+                        colourPreferenceTable,
+                        (balance, colour) -> new ColourBalanceEvent(colour, balance == null ? 0 : balance.balance()),
+                        Joined.<String, BalanceStateEvent, String>as("colour-balance-join")
+                                .withValueSerde(balanceStateSerde))
+                .to(
+                        outTopic,
+                        Produced.<String, ColourBalanceEvent>as("join-producer").withValueSerde(colourBalanceSerde));
+    }
 }

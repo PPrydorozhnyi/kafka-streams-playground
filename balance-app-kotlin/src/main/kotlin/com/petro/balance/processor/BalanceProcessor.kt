@@ -62,7 +62,7 @@ class BalanceProcessor {
         val latestUpdateAt = latestState.latestChangeTime
         val publishedAt = update.publishedAt
 
-        return latestState.copy(
+        return BalanceStateEvent(
             name = update.name,
             balance = latestState.balance + update.balance,
             latestChangeTime = if (latestUpdateAt < publishedAt) publishedAt else latestUpdateAt,

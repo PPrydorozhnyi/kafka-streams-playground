@@ -13,20 +13,13 @@ import org.springframework.kafka.config.TopicBuilder;
 @EnableKafkaStreams
 public class KafkaConfig {
 
-  @Bean
-  NewTopic inTopic(@Value("${spring.kafka.topics.in}") String inTopic) {
-    return TopicBuilder.name(inTopic)
-        .partitions(3)
-        .replicas(1)
-        .build();
-  }
+    @Bean
+    NewTopic inTopic(@Value("${spring.kafka.topics.in}") String inTopic) {
+        return TopicBuilder.name(inTopic).partitions(3).replicas(1).build();
+    }
 
-  @Bean
-  NewTopic outTopic(@Value("${spring.kafka.topics.out}") String outTopic) {
-    return TopicBuilder.name(outTopic)
-        .partitions(3)
-        .replicas(1)
-        .build();
-  }
-
+    @Bean
+    NewTopic outTopic(@Value("${spring.kafka.topics.out}") String outTopic) {
+        return TopicBuilder.name(outTopic).partitions(3).replicas(1).build();
+    }
 }

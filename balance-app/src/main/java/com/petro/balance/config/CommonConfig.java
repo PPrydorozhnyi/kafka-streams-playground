@@ -13,13 +13,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class CommonConfig {
 
-  @Bean
-  public ObjectMapper objectMapper() {
-    return JsonMapper.builder()
-        .addModule(new JavaTimeModule())
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-        .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
-        .build();
-  }
+    @Bean
+    public ObjectMapper objectMapper() {
+        return JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
+                .build();
+    }
 }

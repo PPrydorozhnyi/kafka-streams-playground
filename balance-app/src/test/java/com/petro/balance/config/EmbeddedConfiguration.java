@@ -26,12 +26,12 @@ public class EmbeddedConfiguration {
 
     @Bean
     public ProducerFactory<String, String> stringFactory() {
-        return new DefaultKafkaProducerFactory<>(properties.buildProducerProperties(), new StringSerializer(), new StringSerializer());
+        return new DefaultKafkaProducerFactory<>(
+                properties.buildProducerProperties(null), new StringSerializer(), new StringSerializer());
     }
 
     @Bean
-    public KafkaTemplate<String, String> stringKafkaTemplate(
-            ProducerFactory<String, String> stringFactory) {
+    public KafkaTemplate<String, String> stringKafkaTemplate(ProducerFactory<String, String> stringFactory) {
         return new KafkaTemplate<>(stringFactory);
     }
 
@@ -48,11 +48,11 @@ public class EmbeddedConfiguration {
             this.objectMapper = objectMapper;
         }
 
-        @KafkaListener(groupId = "some-random-group", topics = "${spring.kafka.topics.balance-colour-topic}", autoStartup = "true")
-        void receive(
-            @Header(KafkaHeaders.RECEIVED_KEY) String key,
-            @Payload final String payload
-        ) {
+        @KafkaListener(
+                groupId = "some-random-group",
+                topics = "${spring.kafka.topics.balance-colour-topic}",
+                autoStartup = "true")
+        void receive(@Header(KafkaHeaders.RECEIVED_KEY) String key, @Payload final String payload) {
             try {
                 colourBalances.put(key, objectMapper.readValue(payload, ColourBalanceEvent.class));
             } catch (JsonProcessingException e) {
